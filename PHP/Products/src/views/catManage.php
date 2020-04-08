@@ -118,13 +118,6 @@ $data = $reqSelectCat->fetchAll(5);
                     <button class="btn btn-warning" type="submit"><i class="fa fa-spinner" aria-hidden="true"></i>
                         Modifier
                     </button>
-
-                    <a href="/&?page=delete_cat&id=<?= $cat->id ?>">
-                        <button class="btn btn-danger" type="button"><i class="fa fa-minus-square"
-                                                                        aria-hidden="true"></i>
-                            Supprimer
-                        </button>
-                    </a>
                 </td>
             </form>
         </tr>

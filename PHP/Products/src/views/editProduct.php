@@ -7,49 +7,6 @@ if (!isset($_GET['productId'])) {
         header('Location: /&?response=notNumId');
     } else {
         $db = getDb();
-        if (isset($_GET['action']) AND $_GET['action'] == "edit") {
-            if (isset($_POST['nameProduct']) && isset($_POST['descriptionProduct']) && isset($_POST['priceProduct']) && isset($_POST['catProducts'])) {
-                $productName = htmlspecialchars(trim($_POST['nameProduct']));
-                $productDesc = htmlspecialchars(trim($_POST['descriptionProduct']));
-                $productPrice = htmlspecialchars(trim($_POST['priceProduct']));
-                $productCat = htmlspecialchars(trim($_POST['catProducts']));
-                if (empty($productName) || empty($productDesc) || $productPrice == '' || empty($productCat)) {
-                    echo "Des champs sont manquants dans le formulaire d'édition de produit";
-                } else {
-                    $sqlSelectCatByName = "SELECT * FROM categories WHERE name = ?";
-                    $reqSelectCatByName = $db->prepare($sqlSelectCatByName);
-                    $reqSelectCatByName->bindParam(1, $productCat);
-                    $reqSelectCatByName->execute();
-                    $nbResultCat = $reqSelectCatByName->rowCount();
-                    $lastIdCat = 0;
-                    if ($nbResultCat == 0) {
-                        $sqlInsertCat = "INSERT INTO categories (name, created) VALUES(?, now())";
-                        $reqInsert = $db->prepare($sqlInsertCat);
-                        $reqInsert->bindParam(1, $productCat);
-                        $reqInsert->execute();
-                        $lastIdCat = $db->lastInsertId();
-                    } else {
-                        $dataCat = $reqSelectCatByName->fetchObject();
-                        $lastIdCat = $dataCat->id;
-                    }
-                    $sqlUpdate = "UPDATE products SET name = ? , description = ?, price = ? , category_id = ? WHERE id = ?";
-                    $reqUpdate = $db->prepare($sqlUpdate);
-                    $reqUpdate->bindParam(1, $productName);
-                    $reqUpdate->bindParam(2, $productDesc);
-                    $reqUpdate->bindParam(3, $productPrice);
-                    $reqUpdate->bindParam(4, $lastIdCat);
-                    $reqUpdate->bindParam(5, $idProduct);
-                    try {
-                        $reqUpdate->execute();
-                        header('Location: /&?response=successEdit');
-                    } catch (PDOException $e) {
-                        echo $e->getMessage();
-                    }
-                }
-            } else {
-                echo "Des champs sont manquants dans le formulaire d'édition de produit";
-            }
-        }
         $sqlSelect = "SELECT products.*, categories.name as catName FROM products INNER JOIN categories on products.category_id = categories.id  WHERE products.id = ?";
         $reqSelect = $db->prepare($sqlSelect);
         $reqSelect->bindParam(1, $idProduct);
@@ -58,14 +15,56 @@ if (!isset($_GET['productId'])) {
         if ($nbresult == 0) {
             header('Location: /&?response=notExistEdit');
         } else {
-            $data = $reqSelect->fetchObject();
-            $sqlSelectCat = "SELECT * FROM categories ORDER BY id ASC";
-            $reqSelectCat = $db->prepare($sqlSelectCat);
-            $reqSelectCat->execute();
-            $dataCat = $reqSelectCat->fetchAll(5);
+            if (isset($_GET['action']) AND $_GET['action'] == "edit") {
+                if (isset($_POST['nameProduct']) && isset($_POST['descriptionProduct']) && isset($_POST['priceProduct']) && isset($_POST['catProducts'])) {
+                    $productName = htmlspecialchars(trim($_POST['nameProduct']));
+                    $productDesc = htmlspecialchars(trim($_POST['descriptionProduct']));
+                    $productPrice = htmlspecialchars(trim($_POST['priceProduct']));
+                    $productCat = htmlspecialchars(trim($_POST['catProducts']));
+                    if (empty($productName) || empty($productDesc) || $productPrice == '' || empty($productCat)) {
+                        echo "Des champs sont manquants dans le formulaire d'édition de produit";
+                    } else {
+                        $sqlSelectCatByName = "SELECT * FROM categories WHERE name = ?";
+                        $reqSelectCatByName = $db->prepare($sqlSelectCatByName);
+                        $reqSelectCatByName->bindParam(1, $productCat);
+                        $reqSelectCatByName->execute();
+                        $nbResultCat = $reqSelectCatByName->rowCount();
+                        $lastIdCat = 0;
+                        if ($nbResultCat == 0) {
+                            $sqlInsertCat = "INSERT INTO categories (name, created) VALUES(?, now())";
+                            $reqInsert = $db->prepare($sqlInsertCat);
+                            $reqInsert->bindParam(1, $productCat);
+                            $reqInsert->execute();
+                            $lastIdCat = $db->lastInsertId();
+                        } else {
+                            $dataCat = $reqSelectCatByName->fetchObject();
+                            $lastIdCat = $dataCat->id;
+                        }
+                        $sqlUpdate = "UPDATE products SET name = ? , description = ?, price = ? , category_id = ? WHERE id = ?";
+                        $reqUpdate = $db->prepare($sqlUpdate);
+                        $reqUpdate->bindParam(1, $productName);
+                        $reqUpdate->bindParam(2, $productDesc);
+                        $reqUpdate->bindParam(3, $productPrice);
+                        $reqUpdate->bindParam(4, $lastIdCat);
+                        $reqUpdate->bindParam(5, $idProduct);
+                        try {
+                            $reqUpdate->execute();
+                            header('Location: /&?response=successEdit');
+                        } catch (PDOException $e) {
+                            echo $e->getMessage();
+                        }
+                    }
+                } else {
+                    echo "Des champs sont manquants dans le formulaire d'édition de produit";
+                }
+            }
         }
+        $data = $reqSelect->fetchObject();
+        $sqlSelectCat = "SELECT * FROM categories ORDER BY id ASC";
+        $reqSelectCat = $db->prepare($sqlSelectCat);
+        $reqSelectCat->execute();
+        $dataCat = $reqSelectCat->fetchAll(5);
     }
-
 }
 ?>
 <h2 class="mb-4">Editer un produit</h2>
@@ -91,7 +90,8 @@ if (!isset($_GET['productId'])) {
             <div class="form-group row">
                 <label for="descriptionProduct" class="col-sm-2 col-form-label">Description</label>
                 <div class="col-sm-10">
-                    <textarea id="descriptionProduct" name="descriptionProduct" class="note-codable w-100"><?= $data->description ?></textarea>
+                    <textarea id="descriptionProduct" name="descriptionProduct"
+                              class="note-codable w-100"><?= $data->description ?></textarea>
                 </div>
             </div>
 

@@ -21,16 +21,13 @@ switch (mb_strtolower($page)) {
         include "src/views/editProduct.php";
         break;
     case 'delete':
-        //page de suppression d'un produit action pour suppression produit
+        include "src/views/deleteProduct.php";
         break;
     case 'read':
         include "src/views/readProduct.php";
         break;
     case 'cat_manage':
         include "src/views/catManage.php";
-        break;
-    case 'delete_cat':
-        //page delete d'une categorie
         break;
 }
 foot();
