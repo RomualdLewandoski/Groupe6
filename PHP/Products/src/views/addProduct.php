@@ -2,7 +2,7 @@
 $db = getDb();
 if (isset($_POST['nameProduct']) && isset($_POST['descriptionProduct']) && isset($_POST['priceProduct']) && isset($_POST['catProducts'])) {
     $productName = htmlspecialchars(trim($_POST['nameProduct']));
-    $productDesc = trim($_POST['descriptionProduct']);
+    $productDesc = htmlspecialchars(trim($_POST['descriptionProduct']));
     $productPrice = htmlspecialchars(trim($_POST['priceProduct']));
     $productCat = htmlspecialchars(trim($_POST['catProducts']));
     if (empty($productName) || empty($productDesc) || $productPrice == '' || empty($productCat)) {
@@ -66,14 +66,8 @@ $data = $reqSelectCat->fetchAll(5);
             <div class="form-group row">
                 <label for="descriptionProduct" class="col-sm-2 col-form-label">Description</label>
                 <div class="col-sm-10">
-                    <script src="./assets/ckeditorfull/ckeditor.js" type="text/javascript"></script>
-                    <textarea id="descriptionProduct" name="descriptionProduct" class="note-codable"
-                              style="height: 270px;"></textarea>
-                    <script>
-                        CKEDITOR.replace('descriptionProduct', {
-                            removePlugins: 'sourcearea, about, forms, iframe, save, preview, print, templates'
-                        });
-                    </script>
+                    <textarea id="descriptionProduct" name="descriptionProduct" class="note-codable w-100"></textarea>
+
                 </div>
             </div>
 
