@@ -1,0 +1,9 @@
+```sql
+select * from user where idUser = 1;
+```
+
+**le texte est en gras**
+*le text est en italique*
+__le text est souligné__
+~~Le texte est barré~~
+||le text est caché||
